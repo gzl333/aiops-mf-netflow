@@ -27,11 +27,11 @@ const copy = useCopyToClipboard()
 </script>
 
 <template>
-  <div class="Service1Page">
+  <div class="Original">
 
     <div class="row">
       <div>
-        当前输入值为:
+        当前输入值为:111
       </div>
       <div>
         {{ input }}
@@ -51,6 +51,8 @@ const copy = useCopyToClipboard()
     </q-btn>
 
   </div>
+
+    <q-avatar rounded size="100px" font-size="82px" color="red" text-color="white" icon="directions" />
 </template>
 
 <style lang="scss" scoped>

@@ -11,11 +11,11 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: 'service1',
-        component: () => import('pages/Service1Page.vue')
+        component: () => import('pages/OriginalPage.vue')
       },
       {
         path: 'service2',
-        component: () => import('pages/Service2Page.vue')
+        component: () => import('pages/ConvergePage.vue')
       },
       // @mimas: about, updates, releases...
       {

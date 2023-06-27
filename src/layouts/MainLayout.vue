@@ -40,31 +40,31 @@ const appVersion = logs[0].version
 
             <q-item>
               <q-item-section class="column items-center q-py-sm text-center text-weight-bold text-grey-8">
-                {{ tc('告警') }}
+                {{ tc('网络流') }}
               </q-item-section>
             </q-item>
 
             <q-item
               clickable
-              :active="activeItem === 'service1'"
-              @click="navigateToUrl(appPath + '/service1')"
+              :active="activeItem === 'original'"
+              @click="navigateToUrl(appPath + '/original')"
               active-class="active-item"
             >
               <q-item-section class="column items-center">
                 <q-icon name="las la-video" size="lg"/>
-                <div class="active-text text-center">{{ tc('服务1') }}</div>
+                <div class="active-text text-center">{{ tc('原始') }}</div>
               </q-item-section>
             </q-item>
 
             <q-item
               clickable
-              :active="activeItem === 'service2'"
-              @click="navigateToUrl(appPath + '/service2')"
+              :active="activeItem === 'original'"
+              @click="navigateToUrl(appPath + '/original')"
               active-class="active-item"
             >
               <q-item-section class="column items-center">
                 <q-icon name="las la-server" size="lg"/>
-                <div class="active-text text-center">{{ tc('服务2') }}</div>
+                <div class="active-text text-center">{{ tc('汇聚') }}</div>
               </q-item-section>
             </q-item>
 
