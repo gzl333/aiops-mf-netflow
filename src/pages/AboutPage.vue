@@ -28,8 +28,8 @@ import { logs } from 'src/configs/logs'
 
     <q-card flat bordered class="content-fixed-width q-mt-lg">
       <q-card-section>
-        <div class="text-h6">关于AIOps-Alert</div>
-        <div>AIOps告警应用</div>
+        <div class="text-h6">关于AIOps-Netflow</div>
+        <div>AIOps网络流应用</div>
       </q-card-section>
 
       <!--      <q-separator inset/>-->

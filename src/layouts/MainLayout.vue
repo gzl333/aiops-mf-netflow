@@ -58,8 +58,8 @@ const appVersion = logs[0].version
 
             <q-item
               clickable
-              :active="activeItem === 'original'"
-              @click="navigateToUrl(appPath + '/original')"
+              :active="activeItem === 'converge'"
+              @click="navigateToUrl(appPath + '/converge')"
               active-class="active-item"
             >
               <q-item-section class="column items-center">
