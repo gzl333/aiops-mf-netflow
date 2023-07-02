@@ -250,11 +250,10 @@ class DetailsInforInterface {
 }
 const arrDetail = ref<DetailsInforInterface[]>([])
 
-const arrObsLog = ref<LogInfoInterface[]>([])
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function loadEachInfo (logInfo: string) {
   // eslint-disable-next-line camelcase
-  const infoArray = logInfo.split(' ')
+  // const infoArray = logInfo.split(' ')
   const infor: DetailsInforInterface = {
     time: '1',
     srcIP: '1',
@@ -270,20 +269,20 @@ function loadEachInfo (logInfo: string) {
     bgpDstAsNumber: '2',
     bgpNextHopAddress: '2'
   }
-  const info: LogInfoInterface = {
-    creation_time: infoArray[1] + infoArray[2],
-    real_ip: infoArray[0],
-    user_ip: infoArray[3],
-    request_info: infoArray[9],
-    upload_stream: Number(infoArray[5]),
-    down_stream: Number(infoArray[6]),
-    status: Number(infoArray[4])
-  }
+  // const info: LogInfoInterface = {
+  //   creation_time: infoArray[1] + infoArray[2],
+  //   real_ip: infoArray[0],
+  //   user_ip: infoArray[3],
+  //   request_info: infoArray[9],
+  //   upload_stream: Number(infoArray[5]),
+  //   down_stream: Number(infoArray[6]),
+  //   status: Number(infoArray[4])
+  // }
   arrDetail.value.push(infor)
 }
 function loadObsInfo (res:any): void {
-  for (let i = 0; i < res.value.results.length; i++) {
-    const logInfo = res.value.results[i][1]
+  for (let i = 0; i < res.value.length; i++) {
+    const logInfo = JSON.parse(res.value[i][1])
     loadEachInfo(logInfo)
   }
 }
@@ -347,9 +346,10 @@ const getObsloginfo = async () => {
         end: 1688112766
       }
     }).then((res) => {
-    result.value = res.data
-    paginationTable.value.count = res.data.count
+    result.value = res.data.result
+    paginationTable.value.count = res.data.result.count
     loadObsInfo(result)
+    console.log('getobs', result)
   })
 }
 // 表单筛选
@@ -366,14 +366,14 @@ const checkdate = async (date: string) => {
 }
 const changeSort = async () => {
   getLogInfoQuery.value.direction = toggleSort.value
-  arrObsLog.value = []
+  arrDetail.value = []
   await getObsloginfo()
 }
 const changeSmallTab = async (name: string, id: string) => {
   console.log('changeSmallTabid', id)
   activeItem2.value = name
   getLogInfoQuery.value.app_id = id
-  arrObsLog.value = []
+  arrDetail.value = []
   await getObsloginfo()
 }
 const search = async () => {
@@ -391,7 +391,7 @@ const search = async () => {
   console.log('startString', startString)
   getLogInfoQuery.value.start = startString.value * 1000000
   getLogInfoQuery.value.end = Math.floor(endString.value.getTime() * 1000000)
-  arrObsLog.value = []
+  arrDetail.value = []
   await api.aiops.netflow.getNetflowLog(
     {
       query: {
@@ -650,7 +650,7 @@ const changePageSize = () => {
                         id="StorageMeteringTable"
                         card-class="no-padding"
                         table-header-class="bg-grey-1 text-grey"
-                        :rows="arrObsLog"
+                        :rows="arrDetail"
                         :columns= "nginxLogColumns"
                         row-key="name"
                         color="primary"
@@ -663,17 +663,22 @@ const changePageSize = () => {
                         <template v-slot:body="props">
                           <q-tr :props="props">
                             <q-td class="no-padding"  key="sort" :props="props" :label="toggleSort">
-                              {{ props.row.creation_time}}
+                              {{ 1}}
                             </q-td>
-                            <q-td  :class="['my-table-cell']" class="no-padding" key="creation_time" :props="props">{{props.row.t}}</q-td>
-                            <q-td  :class="['my-table-cell']" class="no-padding" key="remote_ip" :props="props" style="white-space:normal;">{{ props.row.user_ip }}</q-td>
-                            <q-td  :class="['my-table-cell']" class="no-padding" key="local_ip" :props="props" >{{ props.row.real_ip}}</q-td>
-                            <q-td  :class="['my-table-cell']" class="no-padding" key="upload_stream" :props="props">{{ props.row.upload_stream}}</q-td>
-                            <q-td  :class="['my-table-cell']" class="no-padding" key="down_stream" :props="props">{{ props.row.down_stream}}</q-td>
-                            <q-td  :class="['my-table-cell']" class="no-padding" key="status" :props="props">{{ props.row.status}}</q-td>
-                            <q-td  :class="['my-table-cell1']" class="no-padding" key="request_info" :props="props" style="white-space:normal;word-break:break-all;word-wrap:break-word;">
-                              {{ props.row.request_info }}
-                            </q-td>
+                            <q-td  :class="['my-table-cell']" class="no-padding" key="time" :props="props">{{props.row.time}}</q-td>
+<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="scrIP" :props="props" style="white-space:normal;">{{ props.row.scrIP}}</q-td>-->
+<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="local_ip" :props="props" >{{ props.row.scrIP}}</q-td>-->
+<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="upload_stream" :props="props">{{ props.row. scrIP}}</q-td>-->
+<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="down_stream" :props="props">{{ props.row. scrIP}}</q-td>-->
+<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="status" :props="props">{{ props.row. scrIP}}</q-td>-->
+<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="creation_time" :props="props">{{props.row. scrIP}}</q-td>-->
+<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="remote_ip" :props="props" style="white-space:normal;">{{ props.row.scrIP}}</q-td>-->
+<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="local_ip" :props="props" >{{ props.row. scrIP}}</q-td>-->
+<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="upload_stream" :props="props">{{ props.row. scrIP}}</q-td>-->
+<!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="down_stream" :props="props">{{ props.row. scrIP}}</q-td>-->
+<!--                            <q-td  :class="['my-table-cell1']" class="no-padding" key="request_info" :props="props" style="white-space:normal;word-break:break-all;word-wrap:break-word;">-->
+<!--                              {{ props.row.scrIP}}-->
+<!--                            </q-td>-->
                           </q-tr>
                         </template>
                         <template v-slot:top-right>
