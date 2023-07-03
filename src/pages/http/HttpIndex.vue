@@ -79,7 +79,6 @@ const timeFrom = ref(startTime)
 const forTime = Number(date.formatDate(dateFrom.value + ' ' + timeFrom.value, 'X'))
 // 表单筛选
 const timeNumber = ref(10)
-console.log(forTime)
 const toggleSort = ref('forward')
 const getLogInfoQuery = ref<getLogInfoTabListInterface>({
   direction: 'forward',
@@ -197,7 +196,6 @@ function loadObsInfo (res:any): void {
     logInfo1.value = JSON.parse(res[i][1]).srcIP
     loadEachInfo(logInfo, time)
   }
-  console.log(arrDetail.value)
 }
 const getObsloginfo = async () => {
   isLoading.value = true
@@ -210,14 +208,14 @@ const search = () => {
   let startString = Number(date.formatDate(dateFrom.value + ' ' + timeFrom.value, 'X'))
   let endString = 0
   if (modelTimeUnit.value.value === 'millisecond') {
-    endString = (startString * 1000 + timeNumber.value) * 1000000
+    endString = (startString * 1000 + Number(timeNumber.value)) * 1000000
     startString = startString * 1000000000
   } else if (modelTimeUnit.value.value === 'second') {
-    endString = startString + timeNumber.value
+    endString = startString + Number(timeNumber.value)
   } else if (modelTimeUnit.value.value === 'minute') {
-    endString = startString + timeNumber.value * 60
+    endString = startString + Number(timeNumber.value) * 60
   } else if (modelTimeUnit.value.value === 'hour') {
-    endString = startString + timeNumber.value * 60 * 60
+    endString = startString + Number(timeNumber.value) * 60 * 60
   }
   // if (modelTimeUnit.value.value === 'millisecond') {
   //   startString = Math.floor(endString.getTime()) - timeNumber.value
