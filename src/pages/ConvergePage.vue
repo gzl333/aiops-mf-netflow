@@ -104,6 +104,7 @@
 <!--}-->
 <!--</style>-->
 <script setup lang="ts">
+/* eslint-disable */
 import { ref, onMounted, computed } from 'vue'
 const activeItem = ref()
 const activeItem2 = ref<string|undefined>('')

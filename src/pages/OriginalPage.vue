@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable */
 import { ref, computed, nextTick, onMounted } from 'vue'
 import api from 'src/api'
 import aiops from 'src/api/aiops'

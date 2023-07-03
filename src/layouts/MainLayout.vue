@@ -44,22 +44,34 @@ const appVersion = logs[0].version
               </q-item-section>
             </q-item>
 
-            <q-item
-              clickable
-              :active="activeItem === 'original'"
-              @click="navigateToUrl(appPath + '/original')"
-              active-class="active-item"
-            >
-              <q-item-section class="column items-center">
-                <q-icon name="las la-video" size="lg"/>
-                <div class="active-text text-center">{{ tc('原始') }}</div>
-              </q-item-section>
-            </q-item>
+<!--            <q-item-->
+<!--              clickable-->
+<!--              :active="activeItem === 'original'"-->
+<!--              @click="navigateToUrl(appPath + '/original')"-->
+<!--              active-class="active-item"-->
+<!--            >-->
+<!--              <q-item-section class="column items-center">-->
+<!--                <q-icon name="las la-video" size="lg"/>-->
+<!--                <div class="active-text text-center">{{ tc('原始') }}</div>-->
+<!--              </q-item-section>-->
+<!--            </q-item>-->
+
+<!--            <q-item-->
+<!--              clickable-->
+<!--              :active="activeItem === 'converge'"-->
+<!--              @click="navigateToUrl(appPath + '/converge')"-->
+<!--              active-class="active-item"-->
+<!--            >-->
+<!--              <q-item-section class="column items-center">-->
+<!--                <q-icon name="las la-server" size="lg"/>-->
+<!--                <div class="active-text text-center">{{ tc('汇聚') }}</div>-->
+<!--              </q-item-section>-->
+<!--            </q-item>-->
 
             <q-item
               clickable
-              :active="activeItem === 'converge'"
-              @click="navigateToUrl(appPath + '/converge')"
+              :active="activeItem === 'test'"
+              @click="navigateToUrl(appPath + '/test')"
               active-class="active-item"
             >
               <q-item-section class="column items-center">

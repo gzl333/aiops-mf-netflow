@@ -7,7 +7,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: appPath,
     component: () => import('layouts/MainLayout.vue'),
-    redirect: appPath + '/original',
+    redirect: appPath + '/test',
     children: [
       {
         path: 'original',
@@ -16,6 +16,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'converge',
         component: () => import('pages/ConvergePage.vue')
+      },
+      {
+        path: 'test',
+        component: () => import('pages/http/HttpIndex.vue')
       },
       // @mimas: about, updates, releases...
       {
