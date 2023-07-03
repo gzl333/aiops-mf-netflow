@@ -148,24 +148,8 @@ const logTab = async () => {
     })
   bigTabList1.value = logRes.data.results
   detail.value = JSON.parse(logRes.data.result[0][1])
-  // Time.value = logRes.data.result[0][0]
-  // srcIP.value = JSON.parse(logRes.data.result[0][1]).srcIP
-  // scrTransportPort.value = JSON.parse(logRes.data.result[0][1]).scrTransportPort
-  // transport.value = JSON.parse(logRes.data.result[0][1]).network.transport//
-  // dstIP.value = JSON.parse(logRes.data.result[0][1]).dstIP
-  // dstTransportPort.value = JSON.parse(logRes.data.result[0][1]).dstTransportPort
-  // bytes.value = JSON.parse(logRes.data.result[0][1]).network.bytes//
-  // direction.value = JSON.parse(logRes.data.result[0][1]).network.direction//
-  // ingressInterface.value = JSON.parse(logRes.data.result[0][1]).ingressInterface
-  // egressInterface.value = JSON.parse(logRes.data.result[0][1]).egressInterface
-  // bgpSrcAsNumber.value = JSON.parse(logRes.data.result[0][1]).bgpSrcAsNumber
-  // bgpDstAsNumber.value = JSON.parse(logRes.data.result[0][1]).bgpDstAsNumber
-  // bgpNextHopAddress.value = JSON.parse(logRes.data.result[0][1]).bgpNextHopAddress
   console.log('data:', logRes.data)
   console.log('dataJSON:', JSON.parse(logRes.data.result[0][1]))
-  // console.log('time:', Time.value)
-  // console.log('srcIP:', srcIP.value)
-  // console.log('transport:', transport.value)
 }
 
 // 时间处理
@@ -251,56 +235,52 @@ class DetailsInforInterface {
 const arrDetail = ref<DetailsInforInterface[]>([])
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-function loadEachInfo (logInfo: string) {
+function loadEachInfo (logInfo: any) {
   // eslint-disable-next-line camelcase
   // const infoArray = logInfo.split(' ')
   const infor: DetailsInforInterface = {
-    time: '1',
-    srcIP: '1',
-    scrTransportPort: '1',
-    transport: '1',
-    dstIP: '2',
-    dstTransportPort: '2',
-    bytes: '2',
-    direction: '2',
-    ingressInterface: '2',
-    egressInterface: '2',
-    bgpSrcAsNumber: '2',
-    bgpDstAsNumber: '2',
-    bgpNextHopAddress: '2'
+    time: logInfo.srcIP,
+    srcIP: logInfo.srcIP,
+    scrTransportPort: logInfo.scrTransportPort,
+    transport: logInfo.network.transport,
+    dstIP: logInfo.dstIP,
+    dstTransportPort: logInfo.dstTransportPort,
+    bytes: logInfo.network.bytes,
+    direction: logInfo.network.direction,
+    ingressInterface: logInfo.ingressInterface,
+    egressInterface: logInfo.egressInterface,
+    bgpSrcAsNumber: logInfo.bgpSrcAsNumber,
+    bgpDstAsNumber: logInfo.bgpDstAsNumber,
+    bgpNextHopAddress: logInfo.bgpNextHopAddress
   }
-  // const info: LogInfoInterface = {
-  //   creation_time: infoArray[1] + infoArray[2],
-  //   real_ip: infoArray[0],
-  //   user_ip: infoArray[3],
-  //   request_info: infoArray[9],
-  //   upload_stream: Number(infoArray[5]),
-  //   down_stream: Number(infoArray[6]),
-  //   status: Number(infoArray[4])
-  // }
   arrDetail.value.push(infor)
 }
 function loadObsInfo (res:any): void {
   for (let i = 0; i < res.value.length; i++) {
     const logInfo = JSON.parse(res.value[i][1])
+    const logInfo1 = ref()
+    logInfo1.value = JSON.parse(res.value[i][1]).srcIP
     loadEachInfo(logInfo)
+    console.log('logInfo:', logInfo)
+    console.log('logInfo1:', logInfo1.value)
   }
 }
 const result = ref()
 // 数据表字段设计
 const nginxLogColumns = computed(() => [
-  { name: '源IP地址', label: '源IP地址', field: 'scrIP' },
-  { name: '源端口', label: '源端口', field: 'srcTransportPort' },
-  { name: '协议', label: '协议', field: 'transport' },
-  { name: '目的IP地址', label: '目的IP地址', field: 'dstIP' },
-  { name: '目的端口', label: '目的端口', field: 'dstTransportPort' },
-  { name: '数据包大小', label: '数据包大小', field: 'bytes' },
-  { name: '方向', label: '方向', field: 'direction' },
-  { name: '路由器入口', label: '路由器入口', field: 'ingressInterface' },
-  { name: '路由器出口', label: '路由器入口', field: 'egressInterface' },
-  { name: 'BGP源自治域（AS)号', label: 'BGP源自治域（AS)号', field: 'bgpSrcAsNumber' },
-  { name: 'BGP目的自治域（AS)号', label: 'BGP目的自治域（AS)号', field: 'bgpDstAsNumber' },
-  { name: 'BGP下一跳地址', label: 'BGP下一跳地址', field: 'bgpNextHopAddress' }
+  { name: 'time', label: 'time', align: 'center' }
+  // { name: '源IP地址', label: '源IP地址', field: 'scrIP' },
+  // { name: '源端口', label: '源端口', field: 'srcTransportPort' },
+  // { name: '协议', label: '协议', field: 'transport' },
+  // { name: '目的IP地址', label: '目的IP地址', field: 'dstIP' },
+  // { name: '目的端口', label: '目的端口', field: 'dstTransportPort' },
+  // { name: '数据包大小', label: '数据包大小', field: 'bytes' },
+  // { name: '方向', label: '方向', field: 'direction' },
+  // { name: '路由器入口', label: '路由器入口', field: 'ingressInterface' },
+  // { name: '路由器出口', label: '路由器入口', field: 'egressInterface' },
+  // { name: 'BGP源自治域（AS)号', label: 'BGP源自治域（AS)号', field: 'bgpSrcAsNumber' },
+  // { name: 'BGP目的自治域（AS)号', label: 'BGP目的自治域（AS)号', field: 'bgpDstAsNumber' },
+  // { name: 'BGP下一跳地址', label: 'BGP下一跳地址', field: 'bgpNextHopAddress' }
 ])
 // 获取日志数据
 const paginationTable = ref({
@@ -523,8 +503,9 @@ const changeBigTabIndex = (index: number, descname: string) => {
   Object.assign(test2.value, bigTabList?.value[index])
 }
 onMounted(async () => {
-  await logTab()
+  // await logTab()
   // await getHttpCategroyList()
+  arrDetail.value = []
   await getObsloginfo()
   // loadObsInfo(result)
   await getDayAll(dateFrom.value.toString() + ' ' + '00:00:00', dateFrom.value.toString() + ' ' + '23:59:59')
@@ -662,10 +643,10 @@ const changePageSize = () => {
                       >
                         <template v-slot:body="props">
                           <q-tr :props="props">
-                            <q-td class="no-padding"  key="sort" :props="props" :label="toggleSort">
-                              {{ 1}}
-                            </q-td>
-                            <q-td  :class="['my-table-cell']" class="no-padding" key="time" :props="props">{{props.row.time}}</q-td>
+<!--                            <q-td class="no-padding"  key="sort" :props="props" :label="toggleSort">-->
+<!--                              {{ 1}}-->
+<!--                            </q-td>-->
+                            <q-td  :class="['my-table-cell']" class="no-padding" key="time" :props="props">{{ props.row.time}}</q-td>
 <!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="scrIP" :props="props" style="white-space:normal;">{{ props.row.scrIP}}</q-td>-->
 <!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="local_ip" :props="props" >{{ props.row.scrIP}}</q-td>-->
 <!--                            <q-td  :class="['my-table-cell']" class="no-padding" key="upload_stream" :props="props">{{ props.row. scrIP}}</q-td>-->

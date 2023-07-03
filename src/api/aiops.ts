@@ -43,7 +43,7 @@ export default {
       query?: {
         start?: number
         end?: number
-        host_id?:string
+        host ?:string
         offset?: number
         limit?: number
       },
