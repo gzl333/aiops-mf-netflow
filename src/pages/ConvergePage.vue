@@ -235,11 +235,11 @@ class DetailsInforInterface {
 const arrDetail = ref<DetailsInforInterface[]>([])
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-function loadEachInfo (logInfo: any) {
+function loadEachInfo (logInfo: any, time: any) {
   // eslint-disable-next-line camelcase
   // const infoArray = logInfo.split(' ')
   const infor: DetailsInforInterface = {
-    time: logInfo.srcIP,
+    time,
     srcIP: logInfo.srcIP,
     scrTransportPort: logInfo.scrTransportPort,
     transport: logInfo.network.transport,
@@ -259,10 +259,10 @@ function loadObsInfo (res:any): void {
   for (let i = 0; i < res.value.length; i++) {
     const logInfo = JSON.parse(res.value[i][1])
     const logInfo1 = ref()
+    const time = res.value[i][0]
     logInfo1.value = JSON.parse(res.value[i][1]).srcIP
-    loadEachInfo(logInfo)
-    console.log('logInfo:', logInfo)
-    console.log('logInfo1:', logInfo1.value)
+    loadEachInfo(logInfo, time)
+    console.log('logInfo:', time)
   }
 }
 const result = ref()
