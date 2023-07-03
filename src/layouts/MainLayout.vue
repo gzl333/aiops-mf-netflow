@@ -70,13 +70,13 @@ const appVersion = logs[0].version
 
             <q-item
               clickable
-              :active="activeItem === 'test'"
-              @click="navigateToUrl(appPath + '/test')"
+              :active="activeItem === 'switch'"
+              @click="navigateToUrl(appPath + '/switch')"
               active-class="active-item"
             >
               <q-item-section class="column items-center">
                 <q-icon name="las la-server" size="lg"/>
-                <div class="active-text text-center">{{ tc('汇聚') }}</div>
+                <div class="active-text text-center">{{ tc('核心交换机') }}</div>
               </q-item-section>
             </q-item>
 

@@ -21,8 +21,48 @@ interface getLogInfoTabListInterface {
   limit?: number;
   instance?: string;
 }
+class DetailsInforInterface {
+  time: string | undefined
+  srcIP: string | undefined
+  scrTransportPort: string | undefined
+  transport: string | undefined
+  dstIP: string | undefined
+  dstTransportPort: string | undefined
+  bytes: string | undefined
+  direction: string | undefined
+  ingressInterface: string | undefined
+  egressInterface: string | undefined
+  bgpSrcAsNumber: string | undefined
+  bgpDstAsNumber: string | undefined
+  bgpNextHopAddress: string | undefined
+  constructor (time: string, srcIP:string, scrTransportPort:string, transport:string, dstIP:string, dstTransportPort:string, bytes: string, direction: string, ingressInterface: string, egressInterface: string, bgpSrcAsNumber: string, bgpDstAsNumber: string, bgpNextHopAddress: string) {
+    this.time = time
+    this.srcIP = srcIP
+    this.scrTransportPort = scrTransportPort
+    this.transport = transport
+    this.dstIP = dstIP
+    this.dstTransportPort = dstTransportPort
+    this.bytes = bytes
+    this.direction = direction
+    this.ingressInterface = ingressInterface
+    this.egressInterface = egressInterface
+    this.bgpSrcAsNumber = bgpSrcAsNumber
+    this.bgpDstAsNumber = bgpDstAsNumber
+    this.bgpNextHopAddress = bgpDstAsNumber
+  }
+}
+interface resultInterface {
+  real_ip: string,
+  datetime: number,
+  user_ip: string,
+  // bucket: string,
+  status: number,
+  req_bytes: number,
+  res_bytes: number,
+  type: string,
+  http_referer: string
+}
 
-const dnsQuery = ref<HttpCategroyQueryInterface>({})
 const mapRef = ref()
 const bigTabList = ref<any[]>([])
 const test1 = ref()
@@ -36,154 +76,32 @@ const startTime = formatMinuteTime(date1)
 const currentDate = formatDateTime(date2)
 const dateFrom = ref(startDate)
 const timeFrom = ref(startTime)
+const forTime = Number(date.formatDate(dateFrom.value + ' ' + timeFrom.value, 'X'))
+// 表单筛选
+const timeNumber = ref(10)
+console.log(forTime)
 const toggleSort = ref('forward')
 const getLogInfoQuery = ref<getLogInfoTabListInterface>({
   direction: 'forward',
-  // start: Math.floor(new Date(dateFrom.value + ' ' + timeFrom.value).getTime() * 1000000 - 1000000000),
-  // end: Math.floor(new Date(dateFrom.value + ' ' + timeFrom.value).getTime()),
-  start: 1688295600,
-  end: 1688295600,
+  start: forTime * 1000000000,
+  end: (forTime * 1000 + timeNumber.value) * 1000000,
+  // start: 1688295600,
+  // end: 1688295600,
   instance: ''
 })
 // 动态目录
 const test2: any = ref([])
+const isLoading = ref(false)
 let data1 = []
-const getHttpCategroyList = async () => {
-  const res1 = await aiops.log.http.getNetFlowType()
-  const res = await aiops.log.http.getNetFlowList()
-  bigTabList.value = res1.data.results
-  const data = res.data.results.filter((item) => item.host_type === 1)
-  data1 = res.data.results
-  test2.value = data
-  activeItem.value = bigTabList.value[0].name
-  activeItem2.value = data1[0].name
-  console.log(activeItem2.value)
-  // getLogInfoQuery.value.instance = res.data.results[0].source_ip
-  getLogInfoQuery.value.instance = '159.226.8.138'
-
-  // await aiops.log.http.getlogcategory({ query: dnsQuery.value }).then((res) => {
-  // bigTabList.value = res.data.results
-  // test1.value = bigTabList.value[0].desc_name
-
-  // })
-}
-function formatDateTime (date: Date): string {
-  const year = date?.getFullYear().toString().padStart(4, '0')
-  const month = (date?.getMonth() + 1).toString().padStart(2, '0')
-  const day = date?.getDate().toString().padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-function formatMinuteTime (date: Date): string {
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  const second = date.getSeconds().toString().padStart(2, '0')
-  const millisecond = date.getMilliseconds().toString().padStart(3, '0')
-  return `${hours}:${minutes}:${second}:${millisecond}`
-}
-
-// nginx 解析
-// class LogInfoInterface {
-//   creation_time: string | undefined
-//   user_ip: string | undefined
-//   real_ip: string | undefined
-//   request_info: string | undefined
-//   upload_stream: number | undefined
-//   down_stream: number | undefined
-//   status: number | undefined
-//
-//   constructor (creationTime: string, remoteIp: string, localIp: string, requestInfo: string, uploadStream: number, downStream: number, status: number) {
-//     this.creation_time = creationTime
-//     this.user_ip = remoteIp
-//     this.real_ip = localIp
-//     this.request_info = requestInfo
-//     this.upload_stream = uploadStream
-//     this.down_stream = downStream
-//     this.status = status
-//   }
-// }
-
-const arrObsLog: any = ref([])
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const result = ref()
-// function loadEachInfo (logInfo: string) {
-//   console.log('wqeqweqw', logInfo)
-// eslint-disable-next-line camelcase
-// const infoArray = logInfo.split(' ')
-// const info: LogInfoInterface = {
-//   creation_time: infoArray[1] + infoArray[2],
-//   real_ip: infoArray[0],
-//   user_ip: infoArray[3],
-//   request_info: infoArray[9],
-//   upload_stream: Number(infoArray[5]),
-//   down_stream: Number(infoArray[6]),
-//   status: Number(infoArray[4])
-// }
-// arrObsLog.value.push(info)
-// }
-
-// 数据表字段设计
-const nginxLogColumns = computed(() => [
-  { name: 'netflow', label: '网络流信息', align: 'center' }
-])
-// 获取日志数据
-const paginationTable = ref({
-  page: 1,
-  count: 0,
-  rowsPerPage: 100
-})
-
-interface resultInterface {
-  real_ip: string,
-  datetime: number,
-  user_ip: string,
-  // bucket: string,
-  status: number,
-  req_bytes: number,
-  res_bytes: number,
-  type: string,
-  http_referer: string
-}
-
-const nginxLogTableRow = ref<resultInterface[]>()
-const chartData = ref([])
+const chartData = ref<Array<string | number>>([])
 const dateStampStr = Number(new Date(new Date().toLocaleDateString()).getTime()) / 1000
 let smallIndex = 0
 let startTimeFormatter = dateStampStr
-// 表单筛选
-const timeNumber = ref(10)
 const modelTimeUnit = ref({
   label: 'ms',
   value: 'millisecond'
 })
-const checkdate = async (date: string) => {
-  if (new Date(date) > new Date(currentDate)) {
-    alert('时间选择无效')
-  }
-  console.log('dateFromchange', date)
-}
-const changeSort = async (type: string) => {
-  getLogInfoQuery.value.direction = toggleSort.value
-  // getLogInfoQuery.value.app_id = test2.value.website[smallIndex].idx
-  arrObsLog.value = []
-  await getObsloginfo()
-}
-const getObsloginfo = async () => {
-  const tableRes = await aiops.log.http.getNetFlowLog({ query: getLogInfoQuery.value })
-  console.log('ssssssssss', tableRes)
-  // result.value = tableRes.data
-  paginationTable.value.count = tableRes.data.count
-  // arrObsLog.value = tableRes.data.result
-  tableRes.data.result.forEach((item) => {
-    arrObsLog.value.push({ netflow: item[1] })
-  })
-  console.log('22222', arrObsLog.value)
-  // loadObsInfo(result.value.results)
-}
-// function loadObsInfo (res: any): void {
-//   console.log('321312312', res)
-// }
+const arrDetail = ref<DetailsInforInterface[]>([])
 const timeOption = [
   {
     label: 'ms',
@@ -201,25 +119,118 @@ const timeOption = [
     value: 'hour'
   }
 ]
-const search = async () => {
-  const startString = ref<number>(0)
-  const endString = ref(new Date(dateFrom.value + ' ' + timeFrom.value))
-  if (modelTimeUnit.value.value === 'millisecond') {
-    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value
-  } else if (modelTimeUnit.value.value === 'second') {
-    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value * 1000
-  } else if (modelTimeUnit.value.value === 'minute') {
-    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value * 60 * 1000
-  } else if (modelTimeUnit.value.value === 'hour') {
-    startString.value = Math.floor(endString.value.getTime()) - timeNumber.value * 60 * 60 * 1000
+const nginxLogColumns = computed(() => [
+  { name: 'time', label: '时间', align: 'center', field: 'time' },
+  { name: 'scrIP', label: '源IP地址', field: 'scrIP', align: 'center' },
+  { name: 'srcTransportPort', label: '源端口', field: 'srcTransportPort', align: 'center' },
+  { name: 'transport', label: '协议', field: 'transport', align: 'center' },
+  { name: 'dstIP', label: '目的IP地址', field: 'dstIP', align: 'center' },
+  { name: 'dstTransportPort', label: '目的端口', field: 'dstTransportPort', align: 'center' },
+  { name: 'bytes', label: '数据包大小', field: 'bytes', align: 'center' },
+  { name: 'direction', label: '方向', field: 'direction', align: 'center' },
+  { name: 'ingressInterface', label: '路由器入口', field: 'ingressInterface', align: 'center' },
+  { name: 'egressInterface', label: '路由器入口', field: 'egressInterface', align: 'center' },
+  { name: 'bgpSrcAsNumber', label: 'BGP源自治域（AS)号', field: 'bgpSrcAsNumber', align: 'center' },
+  { name: 'bgpDstAsNumber', label: 'BGP目的自治域（AS)号', field: 'bgpDstAsNumber', align: 'center' },
+  { name: 'bgpNextHopAddress', label: 'BGP下一跳地址', field: 'bgpNextHopAddress', align: 'center' }
+])
+const checkdate = async (date: string) => {
+  if (new Date(date) > new Date(currentDate)) {
+    alert('时间选择无效')
   }
-  getLogInfoQuery.value.start = startString.value * 1000000
-  getLogInfoQuery.value.end = Math.floor(endString.value.getTime() * 1000000)
-  arrObsLog.value = []
-  await aiops.log.http.getlogappinfo({ query: getLogInfoQuery.value }).then((res) => {
-    // result.value = res.data
-    // loadObsInfo(result.value)
-  })
+}
+const getHttpCategroyList = async () => {
+  const res1 = await aiops.log.http.getNetFlowType()
+  const res = await aiops.log.http.getNetFlowList()
+  bigTabList.value = res1.data.results
+  const data = res.data.results.filter((item) => item.host_type === 1)
+  data1 = res.data.results
+  test2.value = data
+  activeItem.value = bigTabList.value[0].name
+  activeItem2.value = data1[0].name
+  getLogInfoQuery.value.instance = data1[0].source_ip
+}
+function formatDateTime (date: Date): string {
+  const year = date?.getFullYear().toString().padStart(4, '0')
+  const month = (date?.getMonth() + 1).toString().padStart(2, '0')
+  const day = date?.getDate().toString().padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+function formatMinuteTime (date: Date): string {
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  const second = date.getSeconds().toString().padStart(2, '0')
+  const millisecond = date.getMilliseconds().toString().padStart(3, '0')
+  return `${hours}:${minutes}:${second}:${millisecond}`
+}
+const changeSort = async (type: string) => {
+  getLogInfoQuery.value.direction = toggleSort.value
+  arrDetail.value = []
+  await getObsloginfo()
+}
+function loadEachInfo (logInfo: any, time: any) {
+  // eslint-disable-next-line camelcase
+  // const infoArray = logInfo.split(' ')
+  const infor: DetailsInforInterface = {
+    time,
+    srcIP: logInfo.srcIP,
+    scrTransportPort: logInfo.scrTransportPort,
+    transport: logInfo.network.transport,
+    dstIP: logInfo.dstIP,
+    dstTransportPort: logInfo.dstTransportPort,
+    bytes: logInfo.network.bytes,
+    direction: logInfo.network.direction,
+    ingressInterface: logInfo.ingressInterface,
+    egressInterface: logInfo.egressInterface,
+    bgpSrcAsNumber: logInfo.bgpSrcAsNumber,
+    bgpDstAsNumber: logInfo.bgpDstAsNumber,
+    bgpNextHopAddress: logInfo.bgpNextHopAddress
+  }
+  arrDetail.value.push(infor)
+}
+function loadObsInfo (res:any): void {
+  for (let i = 0; i < res.length; i++) {
+    const logInfo = JSON.parse(res[i][1])
+    const logInfo1 = ref()
+    const time = res[i][0]
+    logInfo1.value = JSON.parse(res[i][1]).srcIP
+    loadEachInfo(logInfo, time)
+  }
+  console.log(arrDetail.value)
+}
+const getObsloginfo = async () => {
+  isLoading.value = true
+  const tableRes = await aiops.log.http.getNetFlowLog({ query: getLogInfoQuery.value })
+  loadObsInfo(tableRes.data.result)
+  isLoading.value = false
+}
+const search = () => {
+  arrDetail.value = []
+  let startString = Number(date.formatDate(dateFrom.value + ' ' + timeFrom.value, 'X'))
+  let endString = 0
+  if (modelTimeUnit.value.value === 'millisecond') {
+    endString = (startString * 1000 + timeNumber.value) * 1000000
+    startString = startString * 1000000000
+  } else if (modelTimeUnit.value.value === 'second') {
+    endString = startString + timeNumber.value
+  } else if (modelTimeUnit.value.value === 'minute') {
+    endString = startString + timeNumber.value * 60
+  } else if (modelTimeUnit.value.value === 'hour') {
+    endString = startString + timeNumber.value * 60 * 60
+  }
+  // if (modelTimeUnit.value.value === 'millisecond') {
+  //   startString = Math.floor(endString.getTime()) - timeNumber.value
+  // } else if (modelTimeUnit.value.value === 'second') {
+  //   startString = Math.floor(endString.getTime()) - timeNumber.value * 1000
+  // } else if (modelTimeUnit.value.value === 'minute') {
+  //   startString = Math.floor(endString.getTime()) - timeNumber.value * 60 * 1000
+  // } else if (modelTimeUnit.value.value === 'hour') {
+  //   startString = Math.floor(endString.getTime()) - timeNumber.value * 60 * 60 * 1000
+  // }
+  getLogInfoQuery.value.start = startString
+  getLogInfoQuery.value.end = endString
+  getObsloginfo()
 }
 const changeData = () => {
   const formattedString = date.formatDate(dateFrom.value, 'X')
@@ -228,14 +239,20 @@ const changeData = () => {
 const getTrendChartData = async (start: number, hostId: string) => {
   mapRef.value.chartStartLoading()
   const trendRes = await aiops.log.http.getNetFlowStatistics({ query: { start, host: hostId } })
-  trendRes.data.results.forEach((item) => {
-    chartData.value.unshift(item.count)
+  dates.value.forEach((dateItm, index) => {
+    const hourMin = Number(date.formatDate(dateFrom.value + ' ' + dateItm, 'X'))
+    const trend = trendRes.data.results.find((trendItem) => trendItem.timestamp === hourMin)
+    if (trend) {
+      chartData.value[index] = trend.count
+    } else {
+      chartData.value[index] = ''
+    }
   })
   mapRef.value.chartStopLoading()
 }
 const search1 = () => {
   chartData.value = []
-  getTrendChartData(startTimeFormatter, test2.value.website[smallIndex].id)
+  getTrendChartData(startTimeFormatter, test2.value[smallIndex].id)
 }
 
 function fromatTime (timestamp: string) {
@@ -315,7 +332,10 @@ const option = computed(() => ({
   xAxis: {
     type: 'category',
     boundaryGap: false,
-    data: dates.value
+    data: dates.value,
+    axisLabel: {
+      interval: 59
+    }
   },
   yAxis: {
     type: 'value'
@@ -331,24 +351,24 @@ const option = computed(() => ({
   ]
 }))
 const changeBigTabIndex = (index: number, descname: string) => {
-  console.log(index)
   chartData.value = []
-  // index1.value = index
-  // activeItem.value = descname
   test1.value = descname
-  // Object.assign(test2.value, bigTabList?.value[index])
-  test2.value = data1.filter((item) => item.host_type === index + 1)
-  // test2.value = bigTabList.value[index]
-  console.log(test2.value)
+  if (index === 0) {
+    test2.value = data1.filter((item) => item.host_type === index + 1)
+  } else {
+    test2.value = data1.filter((item) => item.host_type === 30001 )
+  }
+  getLogInfoQuery.value.instance = test2.value[0].source_ip
   activeItem2.value = test2.value[0].name
+  getObsloginfo()
   getTrendChartData(dateStampStr, test2.value[smallIndex].id)
 }
-const changeSmallTab = async (name: string, id: string, index: number) => {
+const changeSmallTab = async (name: string, ip: string, id: string, index: number) => {
   chartData.value = []
   smallIndex = index
   activeItem2.value = name
-  getLogInfoQuery.value.app_id = id
-  arrObsLog.value = []
+  getLogInfoQuery.value.instance = ip
+  arrDetail.value = []
   await getObsloginfo()
   await getTrendChartData(startTimeFormatter, id)
 }
@@ -356,22 +376,9 @@ onMounted(async () => {
   chartData.value = []
   await getHttpCategroyList()
   await getObsloginfo()
-  // loadObsInfo(result)
   await getDayAll(dateFrom.value.toString() + ' ' + '00:00:00', dateFrom.value.toString() + ' ' + '23:59:59')
   await getTrendChartData(dateStampStr, test2.value[smallIndex].id)
-  // const chartDom = document.getElementById('main')!
-  // const myChart = echarts.init(chartDom)
-  // await myChart.setOption(option)
-  // option && myChart.setOption(option)
-  // myChart.resize({
-  //   width: 1230,
-  //   height: 400
-  // })
 })
-
-const changePageSize = () => {
-  paginationTable.value.page = 1
-}
 
 </script>
 
@@ -383,9 +390,6 @@ const changePageSize = () => {
           <div class="row justify-center">
             <div class="content-fixed-width">
               <div class="row justify-between q-pt-lg q-pb-sm">
-                <div class="col-auto row items-end text-h6 q-px-none">
-                  HTTP日志
-                </div>
               </div>
               <div class="row">
                 <div class="col">
@@ -403,7 +407,6 @@ const changePageSize = () => {
                   </q-tabs>
                 </div>
               </div>
-              <q-separator/>
               <div class="row q-mt-lg ">
                 <div class="col">
                   <line-chart :option="option" ref="mapRef"/>
@@ -432,7 +435,7 @@ const changePageSize = () => {
                       <template v-slot:append>
                         <q-icon name="access_time" class="cursor-pointer">
                           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-time v-model="dateFrom" format24h @update:model-value="checkdate(dateFrom)"
+                            <q-time v-model="timeFrom" format24h @update:model-value="checkdate(timeFrom)"
                                     mask="HH:mm:ss:SSS" with-seconds>
                               <div class="row items-center justify-end">
                                 <q-btn v-close-popup label="确定" color="primary" flat/>
@@ -469,111 +472,54 @@ const changePageSize = () => {
                   align="justify"
                   active-color="primary"
                   active-bg-color="grey-3"
-                  style="width: 16%"
+                  style="width: 12%"
                 >
-                  <q-tab :activeItem2="item1.name" :name="item1.name" v-for=" (item1, index2) in  test2"
-                         class="q-px-none q-py-md q-mr-md" :ripple="false" :label="item1.name"
-                         @click="changeSmallTab(item1.name, item1.id, index2)"
+                  <q-tab v-for=" (item1, index2) in  test2" :activeItem2="item1.name" :name="item1.name" :ripple="false" :label="item1.name"
+                         @click="changeSmallTab(item1.name, item1.source_ip, item1.id, index2)"
                          :key="index2" no-caps>
                   </q-tab>
                 </q-tabs>
-                <div style="width: 84%">
+                <div style="width: 88%">
                   <div class="Service1Page q-ml-md">
                     <div class="row justify-center">
-                      <q-card flat bordered class="my-card col">
-                        <q-card-section class="text-center">
-                          网络流信息
-                        </q-card-section>
-                        <q-separator/>
-                        <q-card-section v-for="(item, index) in arrObsLog" :key="index" class="">
-                            <div class="" style=" word-wrap: break-word;">
-                              {{ item.netflow }}
-                            </div>
-                          <q-separator class="col q-mt-md"/>
-                        </q-card-section>
-                      </q-card>
-<!--                      <q-table-->
-<!--                        style="width: 100%"-->
-<!--                        flat-->
-<!--                        class="row col-20  justify-start  q-pl-md "-->
-<!--                        id="StorageMeteringTable"-->
-<!--                        card-class="no-padding"-->
-<!--                        table-header-class="bg-grey-1 text-grey"-->
-<!--                        :rows="arrObsLog"-->
-<!--                        :columns="nginxLogColumns"-->
-<!--                        row-key="name"-->
-<!--                        color="primary"-->
-<!--                        :loading-label="'notifyLoading'"-->
-<!--                        :no-data-label="'noData'"-->
-<!--                        hide-pagination-->
-<!--                        v-model:pagination="paginationTable"-->
-<!--                        :pagination="{ rowsPerPage: 0 }"-->
-<!--                      >-->
-<!--                        <template v-slot:body="props">-->
-<!--                          <q-tr :props="props">-->
-<!--&lt;!&ndash;                            <q-td class="no-padding" key="netflow" :props="props">&ndash;&gt;-->
-<!--&lt;!&ndash;                              {{ props }}1111111111111111&ndash;&gt;-->
-<!--&lt;!&ndash;                            </q-td>&ndash;&gt;-->
-<!--                            <q-td class="no-padding" key="netflow" :props="props">-->
-<!--                              {{ props.row.netfolw }}-->
-<!--                            </q-td>-->
-<!--&lt;!&ndash;                            <q-td :class="['my-table-cell']" class="no-padding" key="creation_time" :props="props">&ndash;&gt;-->
-<!--&lt;!&ndash;                              {{ fromatTime(props.row.creation_time.slice(1, -1)) }}&ndash;&gt;-->
-<!--&lt;!&ndash;                            </q-td>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <q-td :class="['my-table-cell']" class="no-padding" key="remote_ip" :props="props"&ndash;&gt;-->
-<!--&lt;!&ndash;                                  style="white-space:normal;">{{ props.row.user_ip }}&ndash;&gt;-->
-<!--&lt;!&ndash;                            </q-td>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <q-td :class="['my-table-cell']" class="no-padding" key="local_ip" :props="props">&ndash;&gt;-->
-<!--&lt;!&ndash;                              {{ props.row.real_ip }}&ndash;&gt;-->
-<!--&lt;!&ndash;                            </q-td>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <q-td :class="['my-table-cell']" class="no-padding" key="upload_stream" :props="props">&ndash;&gt;-->
-<!--&lt;!&ndash;                              {{ props.row.upload_stream }}&ndash;&gt;-->
-<!--&lt;!&ndash;                            </q-td>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <q-td :class="['my-table-cell']" class="no-padding" key="down_stream" :props="props">&ndash;&gt;-->
-<!--&lt;!&ndash;                              {{ props.row.down_stream }}&ndash;&gt;-->
-<!--&lt;!&ndash;                            </q-td>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <q-td :class="['my-table-cell']" class="no-padding" key="status" :props="props">&ndash;&gt;-->
-<!--&lt;!&ndash;                              {{ props.row.status }}&ndash;&gt;-->
-<!--&lt;!&ndash;                            </q-td>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <q-td :class="['my-table-cell1']" class="no-padding" key="request_info" :props="props"&ndash;&gt;-->
-<!--&lt;!&ndash;                                  style="white-space:normal;word-break:break-all;word-wrap:break-word;">&ndash;&gt;-->
-<!--&lt;!&ndash;                              {{ props.row.request_info }}&ndash;&gt;-->
-<!--&lt;!&ndash;                            </q-td>&ndash;&gt;-->
-<!--                          </q-tr>-->
-<!--                        </template>-->
-<!--                        <template v-slot:top-right>-->
-<!--                          <div class="col-auto row items-center q-gutter-x-xs">-->
-<!--                          </div>-->
-<!--                        </template>-->
-<!--                      </q-table>-->
-                    </div>
-                    <div class="text-grey q-mt-lg row justify-start q-mb-lg">
-                      <div class="row col-12  justify-start ">
-                        <div class="col-4 row items-center">
-                          <div>
-                            <span>共</span>
-                            <span class="text-subtitle1 q-px-xs text-weight-bold">{{ paginationTable.count }}</span>
-                            <span>条数据</span>
+                      <q-table
+                        style="width: 100%"
+                        flat
+                        id="StorageMeteringTable"
+                        table-header-class="bg-grey-1 text-grey"
+                        :rows="arrDetail"
+                        :columns= "nginxLogColumns"
+                        row-key="name"
+                        color="primary"
+                        :loading="isLoading"
+                        :loading-label="'notifyLoading'"
+                        :no-data-label="'noData'"
+                        :rows-per-page-options="[15, 30, 50, 100, 150, 200, 0]"
+                      >
+                        <template v-slot:body="props">
+                          <q-tr :props="props">
+                            <q-td class="no-padding" key="time" :props="props">{{ date.formatDate(Number(props.row.time) / 1000000, 'YYYY-MM-DD HH:mm:ss') }}</q-td>
+                            <q-td class="no-padding" key="scrIP" :props="props">{{ props.row.srcIP ? props.row.srcIP : '---' }}</q-td>
+                            <q-td class="no-padding" key="srcTransportPort" :props="props" >{{ props.row.srcTransportPort ? props.row.srcTransportPort : '---'}}</q-td>
+                            <q-td class="no-padding" key="transport" :props="props">{{ props.row.transport ? props.row. transport : '---'}}</q-td>
+                            <q-td class="no-padding" key="dstIP" :props="props">{{ props.row.dstIP ? props.row. dstIP : '---' }}</q-td>
+                            <q-td class="no-padding" key="dstTransportPort" :props="props">{{ props.row.dstTransportPort ? props.row. dstTransportPort : '---' }}</q-td>
+                            <q-td class="no-padding" key="bytes" :props="props">{{ props.row.bytes ? props.row. bytes : '---'}}</q-td>
+                            <q-td class="no-padding" key="direction" :props="props">{{ props.row.direction ? props.row.direction : '---' }}</q-td>
+                            <q-td class="no-padding" key="ingressInterface" :props="props" >{{ props.row.ingressInterface ? props.row. ingressInterface : '---' }}</q-td>
+                            <q-td class="no-padding" key="egressInterface" :props="props">{{ props.row.egressInterface ? props.row. egressInterface : '---' }}</q-td>
+                            <q-td class="no-padding" key="bgpSrcAsNumber" :props="props">{{ props.row.bgpSrcAsNumber ? props.row. bgpSrcAsNumber : '---' }}</q-td>
+                            <q-td class="no-padding" key="bgpDstAsNumber" :props="props">
+                              {{ props.row.bgpSrcAsNumber ? props.row.bgpDstAsNumber : '---' }}
+                            </q-td>
+                            <q-td class="no-padding"  key="bgpNextHopAddress" :props="props">{{ props.row.bgpNextHopAddress ? props.row.bgpNextHopAddress : '---' }}</q-td>
+                          </q-tr>
+                        </template>
+                        <template v-slot:top-right>
+                          <div class="col-auto row items-center q-gutter-x-xs">
                           </div>
-                          <div class="row q-ml-md items-center">
-                            <span>每页</span>
-                            <q-select color="grey" v-model="paginationTable.rowsPerPage" :options="[100,200,300]" dense
-                                      options-dense
-                                      borderless @update:model-value="changePageSize">
-                            </q-select>
-                            <span>条</span>
-                          </div>
-                        </div>
-                        <q-pagination
-                          v-model="paginationTable.page"
-                          :max="Math.ceil(paginationTable.count/paginationTable.rowsPerPage)"
-                          :max-pages="12"
-                          direction-links
-                          outline
-                          :ripple="false"
-                          class="col-8 justify-end q-pr-lg"
-                        />
-                      </div>
+                        </template>
+                      </q-table>
                     </div>
                     <q-separator></q-separator>
                   </div>
